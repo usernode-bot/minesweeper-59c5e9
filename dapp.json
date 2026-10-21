@@ -1,0 +1,12 @@
+{
+  "description": "Clear the minefield without setting off a bomb",
+  "category": "other",
+  "icon": {
+    "emoji": "🎲"
+  },
+  "secrets": [],
+  "governance": {
+    "preset": "you_or_the_group"
+  },
+  "tests": []
+}

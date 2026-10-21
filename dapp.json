@@ -8,5 +8,25 @@
   "governance": {
     "preset": "you_or_the_group"
   },
-  "tests": []
+  "tests": [
+    {
+      "name": "Board renders",
+      "path": "/",
+      "expectSelector": "[data-board] button"
+    },
+    {
+      "name": "Empty list on the plain route",
+      "path": "/",
+      "expectText": "No boards yet"
+    },
+    {
+      "name": "Populated demo",
+      "path": "/?demo=1",
+      "expectText": "Your boards",
+      "expectSelector": ".list-row",
+      "id": "populated-demo",
+      "visual": true,
+      "impact": ["public/**", "styles/**"]
+    }
+  ]
 }

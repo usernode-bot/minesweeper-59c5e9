@@ -1,0 +1,138 @@
+/* The screens the spec drew, carried over by the platform before the first
+   version was built (screen 1 is public/index.html's main screen; screen 2,
+   if any, its <template data-spec-screen="2">). Colours are the design kit's
+   tokens, rgb(var(--accent)), so they follow the light and the dark look. */
+
+/* Each screen is one centred column: the phone width it was drawn at grows
+   to a readable column on a wider window, never rows and buttons stretched
+   across the window. Remove this only for an app that fills the window by
+   design, such as a map. */
+[data-spec-screen] {
+  width: 100%;
+  max-width: 42rem;
+  margin-inline: auto;
+}
+
+.app {
+  width: 100%;
+  max-width: 390px;
+  margin-inline: auto;
+  min-height: 1060px;
+  background: rgb(var(--ground));
+  color: rgb(var(--fg));
+  font-family: ui-rounded,system-ui,sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  padding: 16px 12px 24px;
+  box-sizing: border-box;
+}
+
+.app * {box-sizing:border-box;margin:0}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  padding: 0 4px;
+}
+
+.title {font-size:28px;line-height:36px;font-weight:700}
+
+.btn-secondary,.btn-primary {display:inline-flex;min-height:44px;min-width:44px;align-items:center;justify-content:center;gap:8px;border-radius:8px;padding:0 14px;font:500 16px ui-rounded,system-ui,sans-serif}
+
+.btn-secondary {border:1px solid rgb(var(--line));background:rgb(var(--surface));color:rgb(var(--fg))}
+
+.section-label {font-size:14px;line-height:20px;font-weight:500;color:rgb(var(--muted));padding:0 4px;margin-bottom:8px}
+
+.seg {display:flex;gap:4px;padding:4px;background:rgb(var(--raised));border-radius:10px}
+
+.seg button {flex:1;min-height:44px;border:0;border-radius:7px;background:transparent;color:rgb(var(--fg));font:500 16px ui-rounded,system-ui,sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+
+.seg button small {font-size:14px;color:rgb(var(--muted));font-variant-numeric:tabular-nums}
+
+.seg .on {background:rgb(var(--surface));box-shadow:0 0 0 1px rgb(var(--line))}
+
+.seg .btn-primary {background:rgb(var(--accent));color:rgb(var(--on-accent))}
+
+.size {margin-top:16px}
+
+.stats {display:flex;gap:8px;margin:16px 0 12px}
+
+.stat {flex:1;background:rgb(var(--surface));border:1px solid rgb(var(--line));border-radius:12px;padding:8px 12px}
+
+.stat small {display:block;font-size:14px;line-height:20px;color:rgb(var(--muted))}
+
+.stat b {font-size:20px;line-height:28px;font-weight:600;font-variant-numeric:tabular-nums}
+
+.board {display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:2px;width:100%}
+
+.c {aspect-ratio:1;height:auto;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;background:rgb(var(--raised));border:1px solid rgb(var(--line));box-shadow:inset 0 -3px 0 rgb(var(--line));font-variant-numeric:tabular-nums}
+
+.o {background:rgb(var(--surface));box-shadow:none;border:1px dashed rgb(var(--line))}
+
+.n {background:rgb(var(--surface));border:1.5px dashed rgb(var(--accent));box-shadow:none;color:rgb(var(--accent))}
+
+.n2 {color:rgb(var(--win));border-color:rgb(var(--win))}
+
+.n3 {color:rgb(var(--danger));border-color:rgb(var(--danger))}
+
+.f {color:rgb(var(--accent))}
+
+.status {margin-top:12px;display:flex;align-items:center;gap:8px;font-size:14px;line-height:20px;color:rgb(var(--muted));padding:0 4px}
+
+.dot {width:10px;height:10px;border-radius:5px;background:rgb(var(--accent))}
+
+.mode {margin-top:12px}
+
+.recent {margin-top:24px}
+
+.list {border:1px solid rgb(var(--line));border-radius:12px;background:rgb(var(--surface));overflow:hidden;list-style:none;padding:0}
+
+.list-row {display:flex;align-items:center;gap:12px;min-height:44px;padding:12px 16px;border-top:1px solid rgb(var(--line))}
+
+.list-row:first-child {border-top:0}
+
+.ico {width:36px;height:36px;border-radius:18px;display:flex;align-items:center;justify-content:center;flex:none;background:rgb(var(--raised))}
+
+.ico.w {color:rgb(var(--win))}
+
+.ico.l {color:rgb(var(--danger))}
+
+.rt {flex:1;min-width:0}
+
+.rt p {font-weight:500}
+
+.rt small {display:block;font-size:14px;line-height:20px;color:rgb(var(--muted))}
+
+.tm {font-weight:600;font-variant-numeric:tabular-nums}
+
+.tm.x {font-weight:400;color:rgb(var(--muted))}
+
+svg {width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* The board's squares are buttons: same tiles, pressable and focusable. */
+.board button {padding:0;font-family:inherit;cursor:pointer}
+.board button:focus-visible {outline:2px solid rgb(var(--focus));outline-offset:2px}
+
+/* A revealed mine, and the one that ended the game. */
+.m {background:rgb(var(--surface));border:1.5px dashed rgb(var(--line));box-shadow:none;color:rgb(var(--fg))}
+.m.hit {background:rgb(var(--danger));border:1px solid rgb(var(--danger));color:rgb(var(--on-danger))}
+
+/* Numbers 4 to 8 keep the tag's dashed frame, in the text colour. */
+.n4,.n5,.n6,.n7,.n8 {color:rgb(var(--fg));border-color:rgb(var(--fg))}
+
+/* A cleared board reads green, a lost one red; the switch dims when it is over. */
+.status.win {color:rgb(var(--win))}
+.status.lose {color:rgb(var(--danger))}
+.dot.win {background:rgb(var(--win))}
+.dot.lose {background:rgb(var(--danger))}
+.seg button:disabled {opacity:.5;cursor:not-allowed}
+
+/* Narrower than the drawn 390: tighten the margins and the gaps so the eight
+   squares keep their 44 px tap target and the board is never clipped. */
+@media (max-width: 389px) {
+  .app {padding-inline:4px}
+  .board {gap:0}
+}
+.seg button[hidden] {display:none}

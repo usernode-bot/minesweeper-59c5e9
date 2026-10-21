@@ -95,10 +95,13 @@ tables you've marked private), etc.
 
 ## About Minesweeper
 
-Clear the minefield without setting off a bomb
+Clear the minefield without setting off a bomb.
 
-_(add a sentence or two more of product context here so Claude Code has a
-shared understanding of what this app is for)_
+One screen: pick a board size (Small, Medium or Large), then reveal and flag
+squares until the board is clear or you hit a mine. Boards are timed, the
+viewer's fastest cleared board at the selected size shows as Best, and every
+finished game is listed under the board. It is played alone; there is no turn
+taking, sharing or comparing with other members.
 
 ## Your people's data
 
@@ -114,14 +117,22 @@ about, add it to `SKIP`. Keep the file and its mount in `server.js`.
 This app's look. The first real version fills in the blanks; every later
 change follows it, and updates it when a request changes the look on purpose.
 
-- **Palette:** _(name the accent, any second colour and the neutrals, e.g.
-  "accent: tomato red; second: basil green; neutrals: warm greys")_
-- **Signature element:** _(the one thing on screen drawn from this app's
-  subject, which no other app would have)_
-- **Type scale:** `text-title`, `text-heading`, `text-body`, `text-small`
-  _(change their sizes in `tailwind.config.js` if you must, not their number)_
-- **One fixed look:** _(only for an app drawn as its own scene, such as a
-  game: which look, and why. Otherwise delete this line.)_
+- **Palette:** neutrals are cool stone greys (ground, surface, raised, line);
+  accent: teal, for the selected mode, flags and the number 1; win: green, for
+  a cleared board and the number 2; danger: red, for mines and the number 3.
+  Numbers 4 to 8 use the text colour. Covered squares are raised grey tiles
+  with a darker lower lip, so they look pressable; opened empty squares are
+  flat surface white.
+- **Signature element:** each number tile is a small stitched tag: a dashed
+  border in the number's own colour on a flat tile, set against the solid
+  raised covered squares. A flag is a small line-drawn flag; a mine is a plain
+  dot with short spokes (never blast or explosion art).
+- **Type scale:** `text-title`, `text-heading`, `text-body`, `text-small`,
+  in the system's rounded face (`ui-rounded, system-ui, sans-serif`), with
+  tabular figures for the counts and times. The drawn screen in
+  `public/screens.css` sets its own px sizes to match the spec's drawing.
+- **Both looks:** the app follows the viewer's Homeroom theme, light and dark;
+  it has no fixed look.
 
 The kit is in `styles/tailwind-input.css`: colour tokens with a light and
 a dark value (named in `tailwind.config.js`), and a few components
@@ -151,6 +162,14 @@ Re-theme by changing the token values there, keeping every text pair at
 
 ## App-specific conventions
 
-_(optional — e.g. "all currency values stored as integer cents, not
-floats"; "the `posts` table is append-only"; "avoid adding new
-dependencies"; etc.)_
+- The `games` table is public (a game time is not personal data) and holds one
+  row per finished game: `user_id`, `size` (small, medium or large), `won`,
+  `seconds` and `finished_at`. Only finished games are stored; a guest can
+  play but nothing is kept for them.
+- Mines are placed at random after the first reveal, never on that square or
+  its neighbours, so the first tap is always safe. The board is always
+  8 columns wide; the sizes differ in rows and mines.
+- The `?demo=1` board (fixed mines, opened squares and flags) and the twelve
+  made-up finished games live in `public/app.js` and `server.js`. The rows are
+  never stored: `GET /api/games` adds them to its `?demo=1` answer only, on
+  staging.

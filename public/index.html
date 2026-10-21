@@ -78,6 +78,7 @@
        classes, swap this link for the platform-hosted engine instead:
        <script src="/usernode-tailwind/v1/tailwind.js"></script> -->
   <link rel="stylesheet" href="/tailwind.css">
+  <link rel="stylesheet" href="/screens.css">
   <!-- The platform bridge, centrally hosted and loaded by RELATIVE path (the
        handler in server.js serves it under a plain "node server.js"; the
        platform's edge answers it everywhere else). Never vendor it and never
@@ -115,21 +116,35 @@
   <!-- (Named in prose on purpose: Tailwind compiles any class-name word in
        these files, comments included, and the starter should ship only the
        components its screen uses.) -->
-  <main class="mx-auto flex max-w-md flex-col gap-8 px-4 py-10">
-
-    <!-- usernode-starter-notice@1 — starter-template messaging. When building
-         the user's real app, replace this whole screen and delete this block,
-         both sentinel comments included. -->
-    <section class="card flex flex-col items-start gap-3">
-      <div class="flex h-20 w-20 items-center justify-center rounded-2xl border border-line bg-ground text-title">🎲</div>
-      <span class="rounded-full bg-raised px-3 py-1 text-small font-medium text-muted">Starter template</span>
-      <h1 class="text-title">Minesweeper</h1>
-      <p class="text-body text-muted">Welcome to your new app! Everything on this screen is placeholder content that came with it.</p>
-      <p class="text-body text-muted">To change this app, ask Homeroom bot: tap the <strong class="font-semibold text-fg">Homeroom icon</strong>, then <strong class="font-semibold text-fg">Suggest an improvement</strong>. Describe what you'd like in plain English, and it will be turned into your real app.</p>
-    </section>
-    <!-- /usernode-starter-notice@1 -->
-
-    <p class="text-center text-small text-muted">Built on Homeroom. This template screen disappears once you build your real app.</p>
-  </main>
+  <!-- usernode-spec-screens@1: the screens the spec drew, carried over by the platform as this
+       first version's starting point. Their styles are in public/screens.css.
+       Change them where behaviour needs it; do not redraw them. -->
+  <div data-spec-screen="1">
+    <div class="app">
+    <div class="top"><h1 class="title">Minesweeper</h1><button class="btn-secondary"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>New game</button></div>
+    <div class="size"><p class="section-label">Board size</p><div class="seg"><button class="on">Small <small>8×8</small></button><button>Medium <small>8×12</small></button><button>Large <small>8×16</small></button></div></div>
+    <div class="stats"><div class="stat"><small>Mines left</small><b>7</b></div><div class="stat"><small>Time</small><b>02:14</b></div><div class="stat"><small>Best</small><b>01:38</b></div></div>
+    <div class="board">
+    <div class="c o"></div><div class="c o"></div><div class="c o"></div><div class="c o"></div><div class="c o"></div><div class="c n">1</div><div class="c f"><svg viewBox="0 0 24 24"><path d="M6 21V4"/><path d="M6 4h12l-3 4 3 4H6"/></svg></div><div class="c"></div>
+    <div class="c n">1</div><div class="c n">1</div><div class="c n">1</div><div class="c o"></div><div class="c o"></div><div class="c n">1</div><div class="c"></div><div class="c"></div>
+    <div class="c"></div><div class="c f"><svg viewBox="0 0 24 24"><path d="M6 21V4"/><path d="M6 4h12l-3 4 3 4H6"/></svg></div><div class="c n">1</div><div class="c o"></div><div class="c n">1</div><div class="c n">1</div><div class="c"></div><div class="c"></div>
+    <div class="c"></div><div class="c n n2">2</div><div class="c n">1</div><div class="c o"></div><div class="c n">1</div><div class="c f"><svg viewBox="0 0 24 24"><path d="M6 21V4"/><path d="M6 4h12l-3 4 3 4H6"/></svg></div><div class="c"></div><div class="c"></div>
+    <div class="c"></div><div class="c n">1</div><div class="c o"></div><div class="c o"></div><div class="c n">1</div><div class="c"></div><div class="c"></div><div class="c"></div>
+    <div class="c"></div><div class="c n">1</div><div class="c n">1</div><div class="c n">1</div><div class="c n">1</div><div class="c"></div><div class="c"></div><div class="c"></div>
+    <div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div><div class="c n n2">2</div><div class="c"></div>
+    <div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div>
+    </div>
+    <div class="status"><span class="dot"></span>25 of 54 safe squares left. Tap to reveal.</div>
+    <div class="mode seg"><button class="btn-primary"><svg viewBox="0 0 24 24"><path d="M4 4l7 17 2-7 7-2z"/></svg>Reveal</button><button><svg viewBox="0 0 24 24"><path d="M6 21V4"/><path d="M6 4h12l-3 4 3 4H6"/></svg>Flag</button></div>
+    <div class="recent"><p class="section-label">Your boards</p>
+    <ul class="list">
+    <li class="list-row"><span class="ico w"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg></span><div class="rt"><p>Cleared, Small</p><small>Today, 9:41</small></div><span class="tm">01:52</span></li>
+    <li class="list-row"><span class="ico l"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg></span><div class="rt"><p>Hit a mine, Medium</p><small>Today, 9:30</small></div><span class="tm x">00:47</span></li>
+    <li class="list-row"><span class="ico w"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg></span><div class="rt"><p>Cleared, Small</p><small>Yesterday, 18:05</small></div><span class="tm">01:38</span></li>
+    <li class="list-row"><span class="ico w"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg></span><div class="rt"><p>Cleared, Medium</p><small>Yesterday, 17:48</small></div><span class="tm">04:21</span></li>
+    </ul></div>
+    </div>
+  </div>
+  <!-- /usernode-spec-screens@1 -->
 </body>
 </html>

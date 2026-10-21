@@ -310,6 +310,21 @@
     renderStatus(safeLeftText(), '');
   }
 
+  function chord(r, c) {
+    if (phase !== 'playing') return;
+    const cell = grid[r][c];
+    if (!cell.open || cell.count === 0) return;
+    let flagged = 0;
+    forEachNeighbour(r, c, (rr, cc) => {
+      if (grid[rr][cc].flagged) flagged++;
+    });
+    if (flagged !== cell.count) return;
+    forEachNeighbour(r, c, (rr, cc) => {
+      const n = grid[rr][cc];
+      if (!n.open && !n.flagged) reveal(rr, cc);
+    });
+  }
+
   function toggleFlag(r, c) {
     if (phase === 'won' || phase === 'lost') return;
     const cell = grid[r][c];
@@ -543,7 +558,8 @@
     const i = Number(btn.dataset.i);
     const r = Math.floor(i / cols);
     const c = i % cols;
-    if (mode === 'flag') toggleFlag(r, c);
+    if (grid[r][c].open) chord(r, c);
+    else if (mode === 'flag') toggleFlag(r, c);
     else reveal(r, c);
   });
 

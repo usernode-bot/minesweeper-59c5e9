@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+
   <script>
   // usernode-dev-console@1
   (function () {
@@ -113,38 +113,46 @@
        that are right in both looks, and components for buttons, fields,
        lists, cards and data states. The real app keeps the kit; CLAUDE.md's
        "## Design" says how. -->
-  <!-- (Named in prose on purpose: Tailwind compiles any class-name word in
-       these files, comments included, and the starter should ship only the
-       components its screen uses.) -->
   <!-- usernode-spec-screens@1: the screens the spec drew, carried over by the platform as this
        first version's starting point. Their styles are in public/screens.css.
        Change them where behaviour needs it; do not redraw them. -->
   <div data-spec-screen="1">
     <div class="app">
-    <div class="top"><h1 class="title">Minesweeper</h1><button class="btn-secondary"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>New game</button></div>
-    <div class="size"><p class="section-label">Board size</p><div class="seg"><button class="on">Small <small>8×8</small></button><button>Medium <small>8×12</small></button><button>Large <small>8×16</small></button></div></div>
-    <div class="stats"><div class="stat"><small>Mines left</small><b>7</b></div><div class="stat"><small>Time</small><b>02:14</b></div><div class="stat"><small>Best</small><b>01:38</b></div></div>
-    <div class="board">
-    <div class="c o"></div><div class="c o"></div><div class="c o"></div><div class="c o"></div><div class="c o"></div><div class="c n">1</div><div class="c f"><svg viewBox="0 0 24 24"><path d="M6 21V4"/><path d="M6 4h12l-3 4 3 4H6"/></svg></div><div class="c"></div>
-    <div class="c n">1</div><div class="c n">1</div><div class="c n">1</div><div class="c o"></div><div class="c o"></div><div class="c n">1</div><div class="c"></div><div class="c"></div>
-    <div class="c"></div><div class="c f"><svg viewBox="0 0 24 24"><path d="M6 21V4"/><path d="M6 4h12l-3 4 3 4H6"/></svg></div><div class="c n">1</div><div class="c o"></div><div class="c n">1</div><div class="c n">1</div><div class="c"></div><div class="c"></div>
-    <div class="c"></div><div class="c n n2">2</div><div class="c n">1</div><div class="c o"></div><div class="c n">1</div><div class="c f"><svg viewBox="0 0 24 24"><path d="M6 21V4"/><path d="M6 4h12l-3 4 3 4H6"/></svg></div><div class="c"></div><div class="c"></div>
-    <div class="c"></div><div class="c n">1</div><div class="c o"></div><div class="c o"></div><div class="c n">1</div><div class="c"></div><div class="c"></div><div class="c"></div>
-    <div class="c"></div><div class="c n">1</div><div class="c n">1</div><div class="c n">1</div><div class="c n">1</div><div class="c"></div><div class="c"></div><div class="c"></div>
-    <div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div><div class="c n n2">2</div><div class="c"></div>
-    <div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div>
+    <div class="top"><h1 class="title">Minesweeper</h1><button class="btn-secondary" data-new-game type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>New game</button></div>
+    <p class="mt-1 px-1 text-small text-muted" data-usernode-demo-note hidden>Staging demo</p>
+    <div class="size"><p class="section-label">Board size</p><div class="seg" data-size-picker role="group" aria-label="Board size"><button class="on" data-size="small" type="button">Small <small>8×8</small></button><button data-size="medium" type="button">Medium <small>8×12</small></button><button data-size="large" type="button">Large <small>8×16</small></button></div></div>
+    <div class="stats"><div class="stat"><small>Mines left</small><b data-mines-left></b></div><div class="stat"><small>Time</small><b data-time></b></div><div class="stat"><small>Best</small><b data-best><span class="skeleton inline-block h-5 w-14 align-middle"></span></b></div></div>
+    <div class="board" data-board role="group" aria-label="Minefield"></div>
+    <div class="status" data-status><span class="dot" data-status-dot></span><span data-status-text></span></div>
+    <div class="mode seg" data-mode role="group" aria-label="Tap action">
+      <button class="btn-primary" data-mode-reveal type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4l7 17 2-7 7-2z"/></svg>Reveal</button>
+      <button data-mode-flag type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V4"/><path d="M6 4h12l-3 4 3 4H6"/></svg>Flag</button>
+      <button class="btn-primary" data-play-again type="button" hidden>Play again</button>
     </div>
-    <div class="status"><span class="dot"></span>25 of 54 safe squares left. Tap to reveal.</div>
-    <div class="mode seg"><button class="btn-primary"><svg viewBox="0 0 24 24"><path d="M4 4l7 17 2-7 7-2z"/></svg>Reveal</button><button><svg viewBox="0 0 24 24"><path d="M6 21V4"/><path d="M6 4h12l-3 4 3 4H6"/></svg>Flag</button></div>
+    <div class="mt-3 flex items-center justify-between gap-3 px-1 text-small text-muted" data-save-note hidden>
+      <span>Couldn't save this time.</span><button class="btn-secondary" data-save-retry type="button">Retry</button>
+    </div>
     <div class="recent"><p class="section-label">Your boards</p>
-    <ul class="list">
-    <li class="list-row"><span class="ico w"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg></span><div class="rt"><p>Cleared, Small</p><small>Today, 9:41</small></div><span class="tm">01:52</span></li>
-    <li class="list-row"><span class="ico l"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg></span><div class="rt"><p>Hit a mine, Medium</p><small>Today, 9:30</small></div><span class="tm x">00:47</span></li>
-    <li class="list-row"><span class="ico w"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg></span><div class="rt"><p>Cleared, Small</p><small>Yesterday, 18:05</small></div><span class="tm">01:38</span></li>
-    <li class="list-row"><span class="ico w"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg></span><div class="rt"><p>Cleared, Medium</p><small>Yesterday, 17:48</small></div><span class="tm">04:21</span></li>
-    </ul></div>
+    <ul class="list" data-list hidden></ul>
+    <ul class="list" data-list-loading aria-hidden="true">
+      <li class="list-row"><span class="skeleton h-9 w-9 shrink-0 rounded-full"></span><div class="flex-1"><div class="skeleton h-4 w-32"></div><div class="mt-2 skeleton h-3 w-24"></div></div><span class="skeleton h-4 w-12"></span></li>
+      <li class="list-row"><span class="skeleton h-9 w-9 shrink-0 rounded-full"></span><div class="flex-1"><div class="skeleton h-4 w-28"></div><div class="mt-2 skeleton h-3 w-24"></div></div><span class="skeleton h-4 w-12"></span></li>
+      <li class="list-row"><span class="skeleton h-9 w-9 shrink-0 rounded-full"></span><div class="flex-1"><div class="skeleton h-4 w-32"></div><div class="mt-2 skeleton h-3 w-20"></div></div><span class="skeleton h-4 w-12"></span></li>
+    </ul>
+    <div class="state-empty" data-list-empty hidden>
+      <p class="text-body font-medium">No boards yet.</p>
+      <p class="text-small text-muted">Finish a game and its time shows here.</p>
+    </div>
+    <div class="state-error" data-list-error hidden>
+      <p class="text-body font-medium">Couldn't load your boards.</p>
+      <p class="text-small text-muted">The board still works. Check your connection, then try again.</p>
+      <button class="btn-secondary mt-2" data-list-retry type="button">Retry</button>
+    </div>
+    <button class="btn-secondary mt-3 w-full" data-show-more type="button" hidden>Show more</button>
+    </div>
     </div>
   </div>
   <!-- /usernode-spec-screens@1 -->
+  <script src="/app.js" defer></script>
 </body>
 </html>

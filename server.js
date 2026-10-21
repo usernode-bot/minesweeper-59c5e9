@@ -156,7 +156,9 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/health', (_req, res) => res.json({ status: 'ok' }));
+app.get('/health', (_req, res) => res
+  .status(shuttingDown ? 503 : 200)
+  .json({ status: shuttingDown ? 'draining' : 'ok' }));
 
 // The template ships no favicon file; index.html carries an inline SVG
 // icon instead. Answer 204 here so anything that still probes
@@ -164,6 +166,132 @@ app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 // the auth-gated catch-all and surface a 401 in the console on every
 // fresh load.
 app.get('/favicon.ico', (_req, res) => res.status(204).end());
+
+// ── Your boards ────────────────────────────────────────────────────────────
+// Finished games, newest first, twenty a page, plus the viewer's fastest
+// cleared board at each size. Only finished games are stored.
+
+const GAME_SIZES = ['small', 'medium', 'large'];
+
+async function migrate() {
+  await pool.query(`CREATE TABLE IF NOT EXISTS games (
+    id bigserial PRIMARY KEY,
+    user_id text NOT NULL,
+    size text NOT NULL CHECK (size IN ('small', 'medium', 'large')),
+    won boolean NOT NULL,
+    seconds integer NOT NULL CHECK (seconds >= 0 AND seconds <= 86400),
+    finished_at timestamptz NOT NULL
+  )`);
+  await pool.query(`CREATE INDEX IF NOT EXISTS games_user_id_id_desc ON games (user_id, id DESC)`);
+}
+
+// The ?demo=1 preview's made-up finished boards: the viewer's own, across all
+// three sizes over the last few days, mostly cleared. Never stored, and only
+// on the first page of a staging preview.
+const DEMO_GAMES = [
+  { size: 'small', won: true, seconds: 112, day: 0, hour: 9, minute: 41 },
+  { size: 'medium', won: false, seconds: 47, day: 0, hour: 9, minute: 30 },
+  { size: 'small', won: true, seconds: 98, day: 1, hour: 18, minute: 5 },
+  { size: 'medium', won: true, seconds: 261, day: 1, hour: 17, minute: 48 },
+  { size: 'small', won: true, seconds: 121, day: 1, hour: 11, minute: 12 },
+  { size: 'large', won: false, seconds: 63, day: 2, hour: 20, minute: 31 },
+  { size: 'large', won: true, seconds: 512, day: 2, hour: 19, minute: 24 },
+  { size: 'medium', won: true, seconds: 188, day: 3, hour: 8, minute: 15 },
+  { size: 'small', won: true, seconds: 152, day: 3, hour: 7, minute: 52 },
+  { size: 'medium', won: true, seconds: 233, day: 4, hour: 21, minute: 3 },
+  { size: 'small', won: false, seconds: 19, day: 4, hour: 13, minute: 40 },
+  { size: 'large', won: true, seconds: 430, day: 5, hour: 10, minute: 26 },
+];
+
+function demoRows(now) {
+  return DEMO_GAMES.map((g, i) => {
+    const at = new Date(Date.UTC(
+      now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - g.day, g.hour, g.minute));
+    if (at.getTime() > now.getTime()) at.setUTCDate(at.getUTCDate() - 1);
+    return {
+      id: -(i + 1),
+      size: g.size,
+      won: g.won,
+      seconds: g.seconds,
+      finished_at: at.toISOString(),
+    };
+  });
+}
+
+app.get('/api/games', async (req, res) => {
+  const demo = IS_STAGING && req.query.demo === '1';
+  if (!req.user) {
+    // A guest can play, but nothing is kept for them.
+    return res.json({
+      games: [],
+      nextBefore: null,
+      best: { small: null, medium: null, large: null },
+      guest: true,
+    });
+  }
+  try {
+    const userId = String(req.user.id);
+    let before = null;
+    if (req.query.before !== undefined) {
+      before = Number.parseInt(req.query.before, 10);
+      if (!Number.isSafeInteger(before)) return res.status(400).json({ error: 'invalid_before' });
+    }
+
+    const params = [userId];
+    let where = 'user_id = $1';
+    if (before !== null) {
+      params.push(before);
+      where += ' AND id < $2';
+    }
+    const listed = await pool.query(
+      `SELECT id, size, won, seconds, finished_at FROM games
+        WHERE ${where} ORDER BY id DESC LIMIT 21`, params);
+    const games = listed.rows.slice(0, 20);
+    const nextBefore = listed.rows.length > 20 ? games[games.length - 1].id : null;
+    if (demo && before === null) games.push(...demoRows(req.now));
+
+    const bestRows = await pool.query(
+      `SELECT size, MIN(seconds) AS seconds FROM games
+        WHERE user_id = $1 AND won GROUP BY size`, [userId]);
+    const best = { small: null, medium: null, large: null };
+    for (const row of bestRows.rows) best[row.size] = Number(row.seconds);
+    if (demo) {
+      for (const row of demoRows(req.now)) {
+        if (row.won && (best[row.size] === null || row.seconds < best[row.size])) {
+          best[row.size] = row.seconds;
+        }
+      }
+    }
+
+    res.json({ games, nextBefore, best, guest: false });
+  } catch (err) {
+    console.error('games list failed: ' + err.message);
+    res.status(500).json({ error: 'list_failed' });
+  }
+});
+
+app.post('/api/games', async (req, res) => {
+  const body = req.body || {};
+  const size = body.size;
+  const won = body.won;
+  const seconds = body.seconds;
+  if (!GAME_SIZES.includes(size)) return res.status(400).json({ error: 'invalid_size' });
+  if (typeof won !== 'boolean') return res.status(400).json({ error: 'invalid_won' });
+  if (!Number.isInteger(seconds) || seconds < 0 || seconds > 86400) {
+    return res.status(400).json({ error: 'invalid_seconds' });
+  }
+  try {
+    const { rows } = await pool.query(
+      `INSERT INTO games (user_id, size, won, seconds, finished_at)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING id, size, won, seconds, finished_at`,
+      [String(req.user.id), size, won, seconds, req.now]);
+    res.status(201).json(rows[0]);
+  } catch (err) {
+    console.error('saving a game failed: ' + err.message);
+    res.status(500).json({ error: 'save_failed' });
+  }
+});
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -204,9 +332,39 @@ app.get('*', (req, res) => {
 });
 
 async function start() {
+  await migrate();
   const server = app.listen(port, () => console.log(`Listening on :${port}`));
   // Let Envoy retire idle upstream connections at 60s, with a 15s margin.
   server.keepAliveTimeout = 75_000;
+  return server;
 }
 
-start().catch(err => { console.error(err); process.exit(1); });
+// Stop accepting connections, let in-flight requests finish, close the pool.
+const DRAIN_MS = 3000;
+let shuttingDown = false;
+
+async function shutdown(signal) {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  console.log(`[shutdown] ${signal} received, draining`);
+  if (server) {
+    server.close(() => {});
+    server.closeIdleConnections?.();
+    const t = setTimeout(() => server.closeAllConnections?.(), DRAIN_MS);
+    t.unref?.();
+  }
+  try {
+    await pool.end();
+  } catch (err) {
+    console.error('[shutdown] pool.end failed: ' + err.message);
+  }
+  process.exit(0);
+}
+
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));
+
+let server = null;
+start()
+  .then((listener) => { server = listener; })
+  .catch(err => { console.error(err); process.exit(1); });

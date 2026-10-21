@@ -43,9 +43,9 @@
     --win: 21 128 61; /* from the spec's screens */
   }
   .dark {
-    --ground: 12 10 9;
-    --surface: 28 25 23;
-    --raised: 41 37 36;
+    --ground: 17 17 16;
+    --surface: 30 29 27;
+    --raised: 44 42 40;
     --fg: 245 245 244;
     --muted: 168 162 158;
     --line: 68 64 60;
@@ -54,6 +54,7 @@
     --danger: 248 113 113;
     --on-danger: 69 10 10;
     --focus: 94 234 212;
+    --win: 74 222 128;
   }
   /* el.hidden = true hides an element even when a class gives it a display
      (flex, the components below). */

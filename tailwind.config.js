@@ -55,6 +55,10 @@ module.exports = {
         danger: token('danger'),
         'on-danger': token('on-danger'),
         focus: token('focus'), // the keyboard focus ring
+        win: token('win'), // a cleared board, and the number 2
+      },
+      fontFamily: {
+        sans: ['ui-rounded', 'system-ui', 'sans-serif'],
       },
       // The type scale: four sizes, and nothing in between.
       fontSize: {

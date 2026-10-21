@@ -1,27 +1,16 @@
 # Minesweeper
 
-> **Starter template** — this repo was scaffolded by Homeroom Social
-> Vibecoding. Everything in it is placeholder example code until the
-> app's first real feature is built.
+A classic minesweeper board: clear every safe square without revealing a mine.
 
-The scaffold is a small working demo that proves the plumbing works:
+Pick a board size before you start (Small 8×8 with 10 mines, Medium 8×12 with
+18, Large 8×16 with 28), then tap squares to reveal them. An empty square
+opens its neighbours, and a number tells you how many mines touch it. Switch to
+Flag to mark the squares you think hide mines (on a computer, a right-click
+flags whichever mode is selected).
 
-- **Sign-in** — the server verifies the platform-issued user token
-  (an RS256 JWT) on every request, so the app already knows who is
-  using it. No accounts to build.
-- **Database** — the app has its own private Postgres database, ready
-  to store things.
-- **Styling** — Tailwind CSS, precompiled by `npm run build` during
-  image creation with either Kubernetes/Paketo or standalone Docker, in a
-  light and a dark look that follow the viewer's Homeroom theme.
+Your first tap is always safe. The timer starts on it and stops when the board
+is cleared or you hit a mine. Best is your fastest cleared board at the size
+you are playing. Every finished game is listed under the board, newest first.
 
-## Replacing the template
-
-To change this app, ask Homeroom bot: open the app on Homeroom, tap the
-Homeroom icon in the header, then **Suggest an improvement**, and describe
-the app you want in plain English. The template will be replaced with your
-real app. You can also run
-Claude Code against this repo directly; start with `CLAUDE.md`, which
-carries the app-specific notes and points at the platform rules.
-
-Once the real app exists, rewrite this README to describe it.
+The app runs on Homeroom: sign-in, the database and the light and dark looks
+come from the platform. See `CLAUDE.md` for the app's design and conventions.

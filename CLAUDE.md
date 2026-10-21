@@ -166,6 +166,7 @@ Re-theme by changing the token values there, keeping every text pair at
   row per finished game: `user_id`, `size` (small, medium or large), `won`,
   `seconds` and `finished_at`. Only finished games are stored; a guest can
   play but nothing is kept for them.
+- Tapping an opened number whose surrounding flags equal its number reveals its other covered neighbours (in either mode); otherwise the tap does nothing.
 - Mines are placed at random after the first reveal, never on that square or
   its neighbours, so the first tap is always safe. The board is always
   8 columns wide; the sizes differ in rows and mines.
